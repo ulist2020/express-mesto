@@ -17,8 +17,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
   useUnifiedTopology: true
 })
-.then (() => console.log("mongo запустился"))
-;
+.then (() => console.log("Mongo DB запустился"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -1,14 +1,18 @@
 const Card = require('../models/card');
+const BadRequestError = 400;
+const NotFoundError = 404;
+const ServerError = 500;
+
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
         if (!cards) {
-        return res.status(404).send({ message: 'Карточки не найдены' });
+        return res.status(NotFoundError).send({ message: 'Карточки не найдены' });
         }
         return res.status(200).send(cards);
     })
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .catch((err) => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -17,9 +21,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => {res.status(200).send({ card })})
     .catch((err) => {
         if (err.name === 'ValidationError') {
-            return res.status(400).send({ message: `Ошибка валидации: ${err}` });
+            return res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
         }
-            res.status(500).send({ message: `Произошла ошибка: ${err}` })
+            res.status(ServerError).send({ message: `Произошла ошибка: ${err}` })
             });
 };
 
@@ -27,11 +31,11 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
   .then((card) => {
     if (!card) {
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      return res.status(NotFoundError).send({ message: 'Карточка не найдена' });
     }
     return res.status(200).send({ data: card });
   })
-  .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+  .catch((err) => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
 };
 
 module.exports.likeCard = (req, res) => {
@@ -39,7 +43,7 @@ module.exports.likeCard = (req, res) => {
         { $addToSet: { likes: req.params._id } }, // добавить _id в массив, если его там нет
         { new: true })
         .then((card) => {res.status(200).send({ data: card })})
-        .catch(err => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+        .catch(err => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
     
     };
   
@@ -48,5 +52,5 @@ module.exports.likeCard = (req, res) => {
         { $pull: { likes: req.params._id } }, // убрать _id из массива
         { new: true })
         .then((card) => {res.status(200).send({ data: card })})
-        .catch(err => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+        .catch(err => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
     };

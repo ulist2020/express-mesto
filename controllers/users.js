@@ -1,25 +1,28 @@
 const User = require('../models/user');
+const BadRequestError = 400;
+const NotFoundError = 404;
+const ServerError = 500;
 
 module.exports.getUsers = (req, res) => {
     User.find({})
       .then((users) => {
         if (!users) {
-          return res.status(404).send({ message: 'Пользователь не найден' });
+          return res.status(NotFoundError).send({ message: 'Пользователь не найден' });
           }
           return res.status(200).send({ data: users });
       })
-      .catch(err => res.status(500).send({ err }));
+      .catch(err => res.status(ServerError).send({ err }));
   };
 
   module.exports.getUserById = (req, res) => {
     User.findById(req.params._id)
       .then((user) => {
         if (!user) {
-          return res.status(404).send({ message: 'Пользователь не найден' });
+          return res.status(NotFoundError).send({ message: 'Пользователь не найден' });
           }
           return res.status(200).send({ data: user });
       })
-      .catch(err => res.status(500).send({ err }));
+      .catch(err => res.status(ServerError).send({ err }));
   };
 
   module.exports.createUser = (req, res) => {
@@ -29,9 +32,9 @@ module.exports.getUsers = (req, res) => {
     .then(user => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-          return res.status(400).send({ message: `Ошибка валидации: ${err}` });
+          return res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
         }
-          res.status(500).send({ message: `Произошла ошибка: ${err}` })
+          res.status(ServerError).send({ message: `Произошла ошибка: ${err}` })
           });
   };
 
@@ -41,9 +44,9 @@ module.exports.getUsers = (req, res) => {
       .then(user => res.send({ data: user }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-            return res.status(400).send({ message: `Ошибка валидации: ${err}` });
+            return res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
           }
-            res.status(500).send({ message: `Произошла ошибка: ${err}` })
+            res.status(ServerError).send({ message: `Произошла ошибка: ${err}` })
             });
     };
 
@@ -53,8 +56,8 @@ module.exports.getUsers = (req, res) => {
       .then((user) => res.status(200).send({ data: user }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-            return res.status(400).send({ message: `Ошибка валидации: ${err}` });
+            return res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
           }
-            res.status(500).send({ message: `Произошла ошибка: ${err}` })
+            res.status(ServerError).send({ message: `Произошла ошибка: ${err}` })
             });
     };
