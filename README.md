@@ -19,6 +19,6 @@ _Учебное задание: создать сервер для Mesto_
 HTML     
 CSS   
 JavaScript    
-Node.js
-express.js
-Mongo DB
+Node.js  
+express.js  
+Mongo DB  
