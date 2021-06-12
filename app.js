@@ -28,7 +28,7 @@ app.use('/', cardsRoutes);
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '60c329ee8d9bb83af4fb7ef3' 
+    _id: '60c33d621d128a1c7491c859' 
   };
 
   next();
