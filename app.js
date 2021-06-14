@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '60c6d6f96738da46cc18c5a1',
+    _id: '60c329ee8d9bb83af4fb7ef3',
   };
 
   next();
@@ -31,6 +31,10 @@ app.use((req, res, next) => {
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
+
+app.use('/', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
 
 // app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
