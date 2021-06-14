@@ -48,7 +48,12 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true })
-    .then((card) => { res.status(200).send({ data: card }); })
+    .then((card) => {
+      if (!card) {
+        res.status(NotFoundError).send({ message: 'Карточка не найдена' });
+      }
+      res.status(200).send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
@@ -61,7 +66,12 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true })
-    .then((card) => { res.status(200).send({ data: card }); })
+    .then((card) => {
+      if (!card) {
+        res.status(NotFoundError).send({ message: 'Карточка не найдена' });
+      }
+      res.status(200).send({ data: card });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
