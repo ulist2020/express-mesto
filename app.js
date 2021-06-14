@@ -15,26 +15,25 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
-  useUnifiedTopology: true
-})
-.then (() => console.log("Mongo DB запустился"));
+  useUnifiedTopology: true,
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', usersRoutes);
-app.use('/', cardsRoutes);
-
 app.use((req, res, next) => {
   req.user = {
-    _id: '60c33d621d128a1c7491c859' 
+    _id: '60c6d6f96738da46cc18c5a1',
   };
 
   next();
 });
 
-//app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', usersRoutes);
+app.use('/', cardsRoutes);
+
+// app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
-    // Если всё работает, консоль покажет, какой порт приложение слушает
-    console.log(`App listening on port ${PORT}`)
-}) 
+  // Если всё работает, консоль покажет, какой порт приложение слушает
+  console.log(`App listening on port ${PORT}`);
+});
