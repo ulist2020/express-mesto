@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const BadRequestError = 400;
@@ -96,4 +97,17 @@ module.exports.updateAvatar = (req, res) => {
         res.status(ServerError).send({ message: `Произошла ошибка: ${err}` });
       });
   }
+};
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' }),
+      });
+    })
+    .catch(() => {
+      res.status(401).send({ message: 'Неправильные почта или пароль' });
+    });
 };
