@@ -33,8 +33,14 @@ app.use('/', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use((err, req, res, next) => {
+  const { status = 500, message } = err;
+  res.status(status).send({
+    message: status === 500 ? 'На сервере произошла ошибка' : message,
+  });
+  next();
+});
+
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
 });
