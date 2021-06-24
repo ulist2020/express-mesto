@@ -98,16 +98,20 @@ module.exports.updateAvatar = (req, res) => {
       });
   }
 };
+
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' }),
-      });
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      // вернём токен
+      res.send({ token });
     })
     .catch(() => {
-      res.status(401).send({ message: 'Неправильные почта или пароль' });
+      res
+        .status(401)
+        .send({ message: 'Неправильные почта или пароль' });
     });
 };
