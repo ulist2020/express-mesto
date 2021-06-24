@@ -10,6 +10,7 @@ const app = express();
 const { createUser, login } = require('./controllers/users');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
+const auth = require('./middlewares/auth');
 
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -21,8 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.post('/signup', createUser);
-app.post('/signin', login);
+
 app.use((req, res, next) => {
   req.user = {
     _id: '60c329ee8d9bb83af4fb7ef3',
@@ -30,6 +30,12 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.post('/signup', createUser);
+app.post('/signin', login);
+
+// авторизация
+app.use(auth);
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
