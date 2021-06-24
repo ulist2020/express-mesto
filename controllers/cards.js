@@ -24,19 +24,29 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        res.status(NotFoundError).send({ message: 'Карточка с указанным _id не найдена' });
-      }
-      return res.status(200).send({ data: card });
+  Card.findById(req.params.cardId)
+    .orFail(() => {
+      res.status(NotFoundError).send({ message: 'Карточка с указанным _id не найдена' });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BadRequestError).send({ message: `Переданы некорректные данные для удаления карточки: ${err}` });
+    .then((card) => {
+      if (card.owner._id.toString() === req.user._id) {
+        Card.findByIdAndRemove(req.params.cardId)
+          // eslint-disable-next-line no-shadow
+          .then((card) => {
+            res.send(card);
+          })
+          .catch((err) => {
+            if (err.name === 'CastError') {
+              res.status(BadRequestError).send({ message: `Переданы некорректные данные для удаления карточки: ${err}` });
+            }
+          })
+          .catch((err) => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
+      } else {
+        res.status(BadRequestError).send({ message: 'Вы не можете удалять карточки других пользователей' });
       }
-      res.status(ServerError).send({ message: `Произошла ошибка: ${err}` });
-    });
+      return res.status(200).send({ message: 'Карточка удалена' });
+    })
+    .catch((err) => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
 };
 
 module.exports.likeCard = (req, res) => {

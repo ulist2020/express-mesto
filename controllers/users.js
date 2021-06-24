@@ -12,6 +12,22 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => res.status(ServerError).send({ message: `Произошла ошибка: ${err}` }));
 };
 
+module.exports.getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        return res.status(NotFoundError).send({ message: 'Пользователь не найден' });
+      }
+      return res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BadRequestError).send({ message: `Ошибка валидации: ${err}` });
+      }
+      res.status(ServerError).send({ message: `Произошла ошибка: ${err}` });
+    });
+};
+
 module.exports.getUserById = (req, res) => {
   User.findById(req.params._id)
     .then((user) => {

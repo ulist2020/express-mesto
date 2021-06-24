@@ -23,22 +23,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '60c329ee8d9bb83af4fb7ef3',
-  };
-
-  next();
-});
-
 app.post('/signup', createUser);
 app.post('/signin', login);
 
-// авторизация
-app.use(auth);
-
-app.use('/', usersRoutes);
-app.use('/', cardsRoutes);
+app.use('/', auth, usersRoutes);
+app.use('/', auth, cardsRoutes);
 
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
