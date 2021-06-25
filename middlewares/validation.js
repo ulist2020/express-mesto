@@ -1,7 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
 // eslint-disable-next-line no-useless-escape
-const url = /^(https?:\/\/)?(www\.)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/gm;
+const url = /^(https?:\/\/)?(www\.)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/im;
 
 const validateUser = celebrate({
   body: Joi.object().keys({
@@ -12,16 +12,24 @@ const validateUser = celebrate({
 
 const validateAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(url).required()
-      .error(new Joi.ValidationError('Неверная ссылка')),
+    avatar: Joi.string().uri().custom((value, helper) => {
+      if (!value.match(url)) {
+        return helper.message('Invalid value');
+      }
+      return value;
+    }),
   }),
 });
 
 const validateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().pattern(url).required()
-      .error(new Joi.ValidationError('Неверная ссылка')),
+    link: Joi.string().uri().custom((value, helper) => {
+      if (!value.match(url)) {
+        return helper.message('Invalid value');
+      }
+      return value;
+    }),
   }),
 });
 const validateId = celebrate({

@@ -36,7 +36,7 @@ app.use('/', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-app.use(errors); // обработчик ошибок celebrate
+app.use(errors()); // обработчик ошибок celebrate
 
 app.use((err, req, res, next) => {
   const { status = 500, message } = err;

@@ -103,7 +103,7 @@ module.exports.updateUser = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   if (!avatar) {
-    throw new BadRequestError('Переданы некорректные данные при обновлении аватара');
+    res.status(404).send({ message: 'Переданы некорректные данные при обновлении аватара' });
   } else {
     User.findByIdAndUpdate(req.user._id, { avatar })
       .then((user) => {
